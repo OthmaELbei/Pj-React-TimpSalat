@@ -98,65 +98,68 @@ export default function MeinContent() {
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [timings]);
 
   const setupCountdownTimer = () => {
     const momentNow = moment();
+
     let prayerIndex = 2;
 
     if (
-      momentNow.isAfter(
-        moment(timings["Fajr"], "hh:mm") &&
-          momentNow.isBefore(moment(timings["Dhuhr"], "hh:mm"))
-      )
+      momentNow.isAfter(moment(timings["Fajr"], "hh:mm")) &&
+      momentNow.isBefore(moment(timings["Dhuhr"], "hh:mm"))
     ) {
       prayerIndex = 1;
     } else if (
-      momentNow.isAfter(
-        moment(timings["Dhuhr"], "hh:mm") &&
-          momentNow.isBefore(moment(timings["Asr"], "hh:mm"))
-      )
+      momentNow.isAfter(moment(timings["Dhuhr"], "hh:mm")) &&
+      momentNow.isBefore(moment(timings["Asr"], "hh:mm"))
     ) {
       prayerIndex = 2;
     } else if (
-      momentNow.isAfter(
-        moment(timings["Asr"], "hh:mm") &&
-          momentNow.isBefore(moment(timings["Maghrib"], "hh:mm"))
-      )
+      momentNow.isAfter(moment(timings["Asr"], "hh:mm")) &&
+      momentNow.isBefore(moment(timings["Maghrib"], "hh:mm"))
     ) {
       prayerIndex = 3;
     } else if (
-      momentNow.isAfter(
-        moment(timings["Maghrib"], "hh:mm") &&
-          momentNow.isBefore(moment(timings["Isha"], "hh:mm"))
-      )
+      momentNow.isAfter(moment(timings["Maghrib"], "hh:mm")) &&
+      momentNow.isBefore(moment(timings["Isha"], "hh:mm"))
     ) {
       prayerIndex = 4;
     } else {
       prayerIndex = 0;
     }
+
     setNextPrayerIndex(prayerIndex);
 
-    const nextPrayerOpject = prayersArray[prayerIndex];
-    const nextPrayerTimer = timings[nextPrayerOpject.key];
-    const nextprayerTimeMoment = moment(nextPrayerTimer, "hh:mm");
-    let remainingTime = moment(nextPrayerTimer, "hh:mm").diff(momentNow);
+    // now after knowing what the next prayer is, we can setup the countdown timer by getting the prayer's time
+    const nextPrayerObject = prayersArray[prayerIndex];
+    const nextPrayerTime = timings[nextPrayerObject.key];
+    const nextPrayerTimeMoment = moment(nextPrayerTime, "hh:mm");
+
+    let remainingTime = moment(nextPrayerTime, "hh:mm").diff(momentNow);
 
     if (remainingTime < 0) {
       const midnightDiff = moment("23:59:59", "hh:mm:ss").diff(momentNow);
-      const fajrToMidnightDiff = nextprayerTimeMoment.diff(
+      const fajrToMidnightDiff = nextPrayerTimeMoment.diff(
         moment("00:00:00", "hh:mm:ss")
       );
-      console.log(fajrToMidnightDiff);
+
       const totalDiffernce = midnightDiff + fajrToMidnightDiff;
 
       remainingTime = totalDiffernce;
     }
     console.log(remainingTime);
+
     const durationRemainingTime = moment.duration(remainingTime);
 
     setRemainingTime(
-      `${durationRemainingTime.hours()}:${durationRemainingTime.minutes()}:${durationRemainingTime.seconds()}`
+      `${durationRemainingTime.seconds()} : ${durationRemainingTime.minutes()} : ${durationRemainingTime.hours()}`
+    );
+    console.log(
+      "duration issss ",
+      durationRemainingTime.hours(),
+      durationRemainingTime.minutes(),
+      durationRemainingTime.seconds()
     );
   };
 
